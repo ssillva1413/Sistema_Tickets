@@ -1,50 +1,89 @@
+/* ===== CONTAINER PRINCIPAL ===== */
 .form {
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
+  gap: 1.4rem;
+  text-align: left;
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e4e4e4;
 }
 
+/* ===== CAMPOS ===== */
 .field {
   display: flex;
   flex-direction: column;
-  text-align: left;
+  gap: 0.4rem;
 }
 
 .field label {
-  font-weight: 500;
-  color:  #188E5A;
-  margin-bottom: 0.4rem;
+  font-weight: 600;
+  color: #188e5a;
+  font-size: 0.95rem;
 }
 
+/* Inputs padrão */
 .field input,
 .field textarea,
 .field select {
-  padding: 0.7rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid #cfcfcf;
+  border-radius: 10px;
   font-size: 1rem;
-  transition: border-color 0.3s;
+  color: #333;
+  background: #fafafa;
+  transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
 }
 
+/* Efeito ao focar */
 .field input:focus,
 .field textarea:focus,
 .field select:focus {
-  border-color:  #188E5A;
+  border-color: #188e5a;
+  background: #ffffff;
+  box-shadow: 0 0 6px rgba(24, 142, 90, 0.25);
   outline: none;
 }
 
+/* Textarea maior */
+.field textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* ===== BOTÃO ===== */
 .button {
-  background-color:  #188E5A;
+  background-color: #188e5a;
   color: white;
-  font-size: 1.1rem;
-  font-weight: 500;
+  font-size: 1.08rem;
+  font-weight: 600;
   border: none;
-  border-radius: 8px;
-  padding: 0.8rem;
+  border-radius: 12px;
+  padding: 0.95rem;
   cursor: pointer;
-  transition: background-color 0.3s;
+  width: 100%;
+  transition: background 0.3s ease, transform 0.3s ease;
+  margin-top: 0.4rem;
 }
 
 .button:hover {
-  background-color: #2e7d32;
+  background-color: #146b46;
+  transform: translateY(-2px);
+}
+
+.button:active {
+  transform: translateY(0px);
+}
+
+/* ===== RESPONSIVO ===== */
+@media (max-width: 768px) {
+  .form {
+    padding: 1.4rem;
+  }
+
+  .button {
+    font-size: 1rem;
+  }
 }

@@ -13,21 +13,39 @@ const TicketForm = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Ticket enviado:", formData);
-    alert("Chamado enviado com sucesso!");
-    setFormData({
-      setor: "",
-      profissional: "",
-      descricao: "",
-      prioridade: "Normal",
-    });
+
+    try {
+      const response = await fetch("http://localhost:3001/api/tickets", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert("Chamado enviado com sucesso!");
+        setFormData({
+          setor: "",
+          profissional: "",
+          descricao: "",
+          prioridade: "Normal",
+        });
+      } else {
+        alert("Erro ao enviar o chamado!");
+      }
+    } catch (error) {
+      console.error("Erro ao enviar:", error);
+      alert("Erro ao enviar o chamado!");
+    }
   };
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
-
       <div className={styles.field}>
         <label>Nome do Profissional:</label>
         <input
@@ -39,19 +57,18 @@ const TicketForm = () => {
           required
         />
       </div>
+
       <div className={styles.field}>
         <label>Setor:</label>
         <input
           type="text"
           name="setor"
-          placeholder="Ex: Enfermagem, Laboratório..."
+          placeholder="Ex: Recepção, Centro Cirúrgico..."
           value={formData.setor}
           onChange={handleChange}
           required
         />
       </div>
-
-      
 
       <div className={styles.field}>
         <label>Descrição do Problema:</label>
@@ -79,7 +96,7 @@ const TicketForm = () => {
       </div>
 
       <button type="submit" className={styles.button}>
-        Enviar
+        Enviar Chamado
       </button>
     </form>
   );
