@@ -1,84 +1,89 @@
 .home {
-  width: 100%;
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #f9f9f9;
 }
 
-/* ===== SEÇÃO CENTRAL ===== */
 .section {
+  position: relative; 
   flex: 1;
   display: flex;
-  justify-content: center; /* centraliza na horizontal */
-  align-items: flex-start; /* ⬅️ ESSENCIAL */
-  padding: 3rem 1rem;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 6rem;
+
+  background-image: url("/estado.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.8),  
+    rgba(255, 255, 255, 0.6),
+    rgba(255, 255, 255, 0.4)   
+  );
+
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+
+  z-index: 1;
 }
 
 .container {
-  background: #fff;
+  background: #ffffff;
   width: 100%;
-  max-width: 600px;
-  padding: 2.5rem 3rem;
+  max-width: 520px;
+  padding: 2rem 2.5rem;
   border-radius: 18px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
-  text-align: center;
-  transition: all 0.3s ease;
-}
-
-.container:hover {
-  transform: translateY(-3px);
+   position: relative;
+  z-index: 2;
 }
 
 .title {
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: 600;
   color: #188e5a;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
 }
 
 .subtitle {
-  font-size: 1rem;
-  color: #666;
-  margin-bottom: 1.8rem;
-  line-height: 1.5;
+  font-size: 0.95rem;
+  color: #666666;
+  margin-bottom: 1.5rem;
 }
 
-/* ===== Responsivo ===== */
 @media (max-width: 1024px) {
-  .container {
-    max-width: 80%;
-    padding: 2rem;
+  .section {
+    padding-left: 3rem;
   }
 }
 
 @media (max-width: 768px) {
+  .section {
+    justify-content: center;
+    padding-left: 0;
+  }
+
   .container {
-    padding: 1.5rem;
     max-width: 90%;
-  }
-
-  .title {
-    font-size: 1.7rem;
-  }
-
-  .subtitle {
-    font-size: 0.95rem;
+    padding: 1.6rem;
   }
 }
 
 @media (max-width: 480px) {
-  .section {
-    padding: 1.5rem;
-  }
-
   .container {
-    padding: 1rem;
-    border-radius: 14px;
+    padding: 1.3rem;
   }
 
   .title {
-    font-size: 1.4rem;
+    font-size: 1.5rem;
   }
 
   .subtitle {

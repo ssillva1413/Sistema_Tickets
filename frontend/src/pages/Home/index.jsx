@@ -8,8 +8,7 @@ const Home = () => {
   return (
     <div className={styles.home}>
       <Header />
-
-      <main className={styles.section}>
+      <section className={styles.section}>
         <div className={styles.container}>
           <h1 className={styles.title}>Abertura de Chamado</h1>
           <p className={styles.subtitle}>
@@ -17,8 +16,7 @@ const Home = () => {
           </p>
           <TicketForm />
         </div>
-      </main>
-
+      </section>
       <Footer />
     </div>
   );
