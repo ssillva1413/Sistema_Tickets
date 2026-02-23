@@ -1,0 +1,282 @@
+/* ===== OVERLAY (TELA) ===== */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+/* ===== MODAL ===== */
+.modal {
+  background: #fff;
+  width: 100%;
+  max-width: 700px;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+/* ===== TOPO DA FICHA (IMPRESSÃO) ===== */
+.printHeader {
+  display: none;
+  align-items: center;
+  gap: 1.2rem;
+  border-bottom: 2px solid #188e5a;
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.printHeader img {
+  max-height: 70px;
+}
+
+.printHeader h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #188e5a;
+  font-weight: 600;
+}
+
+.printHeader span {
+  font-size: 0.9rem;
+  color: #444;
+}
+
+/* ===== HEADER (TELA) ===== */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.4rem;
+  border-bottom: 2px solid #188e5a;
+}
+
+.header h2 {
+  font-size: 1.1rem;
+  color: #188e5a;
+}
+
+.headerActions {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.header button {
+  border: none;
+  background: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+/* ===== CONTEÚDO ===== */
+.content {
+  padding: 1.4rem;
+  font-size: 0.95rem;
+}
+
+.section {
+  margin-bottom: 1.2rem;
+}
+
+.section strong {
+  color: #188e5a;
+}
+
+.section p {
+  margin-top: 0.3rem;
+  color: #333;
+  line-height: 1.4;
+}
+
+/* ===== GRID DE DADOS ===== */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem 1.2rem;
+  margin-top: 0.8rem;
+  font-size: 0.9rem;
+}
+
+.grid span strong {
+  color: #222;
+}
+
+/* ===== DIVISOR ===== */
+hr {
+  margin: 1.4rem 0;
+  border: none;
+  border-top: 1px solid #dcdcdc;
+}
+
+/* ===== COMENTÁRIOS ===== */
+.content > div:last-child {
+  margin-top: 1rem;
+}
+
+.content > div:last-child strong {
+  display: block;
+  margin-bottom: 0.6rem;
+  color: #188e5a;
+}
+
+/* Comentário individual */
+.content > div:last-child > div > div {
+  background: #f7f7f7;
+  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+/* Espaço entre nome e data */
+.content > div:last-child > div > div b + * {
+  margin-left: 6px;
+  color: #666;
+  font-size: 0.8rem;
+}
+
+/* Texto da mensagem */
+.content > div:last-child > div > div div {
+  margin-top: 4px;
+  color: #333;
+}
+
+
+.content > div:last-child > div > div b {
+  color: #188e5a;
+}
+
+/* ===== AJUSTE DO CAMPO DE COMENTÁRIO (CORREÇÃO) ===== */
+.content textarea {
+  width: 100%;
+  min-height: 70px;
+  margin-top: 8px;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid #cfcfcf;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.content textarea:focus {
+  outline: none;
+  border-color: #188e5a;
+  box-shadow: 0 0 4px rgba(24, 142, 90, 0.25);
+}
+
+/* Botão de enviar comentário alinhado */
+.content button {
+  margin-top: 6px;
+}
+
+/* ================================================= */
+/* ================== IMPRESSÃO =================== */
+/* ================================================= */
+
+@media print {
+  @page {
+    margin: 2cm;
+  }
+
+  html,
+  body {
+    height: auto;
+    background: #fff;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  .overlay {
+    position: static !important;
+    display: block !important;
+    background: none !important;
+  }
+
+  .modal {
+    visibility: visible;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .modal * {
+    visibility: visible;
+  }
+
+  .printHeader {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .headerActions {
+    display: none;
+  }
+
+  .header {
+    border: none;
+    padding: 0;
+    margin-bottom: 1rem;
+  }
+
+  .content {
+    padding: 0;
+    margin-top: 1.2rem;
+    font-size: 12pt;
+  }
+
+  textarea,
+  button {
+    display: none !important;
+  }
+}
+
+/* ================================================= */
+/* ================== MOBILE ======================= */
+/* ================================================= */
+
+@media (max-width: 600px) {
+  .modal {
+    max-width: 95%;
+    margin: 10px;
+    border-radius: 12px;
+  }
+
+  .content {
+    padding: 1rem;
+    font-size: 0.95rem;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .header {
+    padding: 0.8rem 1rem;
+  }
+
+  .header h2 {
+    font-size: 1rem;
+  }
+
+  .content > div:last-child > div > div {
+    font-size: 0.9rem;
+    padding: 0.7rem;
+  }
+
+  .header button {
+    font-size: 1.4rem;
+  }
+}

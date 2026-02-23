@@ -1,0 +1,95 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  text-align: left;
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e4e4e4;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.field label {
+  font-weight: 600;
+  color: #188e5a;
+  font-size: 0.95rem;
+}
+
+.field input,
+.field textarea,
+.field select {
+  padding: 0.8rem 0.9rem;
+  border: 1px solid #cfcfcf;
+  border-radius: 10px;
+  font-size: 1rem;
+  color: #333;
+  background: #fafafa;
+  transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+  border-color: #188e5a;
+  background: #ffffff;
+  box-shadow: 0 0 6px rgba(24, 142, 90, 0.25);
+  outline: none;
+}
+
+.field textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.button {
+  background-color: #188e5a;
+  color: white;
+  font-size: 1.08rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  padding: 0.95rem;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.3s ease, transform 0.3s ease;
+  margin-top: 0.4rem;
+}
+
+.button:hover {
+  background-color: #146b46;
+  transform: translateY(-2px);
+}
+
+.button:active {
+  transform: translateY(0px);
+}
+
+.field select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%23188e5a' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 18px;
+
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .form {
+    padding: 1.4rem;
+  }
+
+  .button {
+    font-size: 1rem;
+  }
+}

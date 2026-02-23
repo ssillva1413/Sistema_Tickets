@@ -43,6 +43,7 @@ const TicketForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       const data = new FormData();
       data.append("profissional", formData.profissional);
@@ -53,23 +54,24 @@ const TicketForm = () => {
 
       const response = await fetch("http://localhost:3001/api/tickets", {
         method: "POST",
-        body: data, 
+        body: data,
       });
 
       const result = await response.json();
 
       if (response.ok) {
-  alert(`Chamado ${result.id} aberto com sucesso!`);
-  setFormData({
-    setor: "",
-    profissional: "",
-    descricao: "",
-    prioridade: "Normal",
-    imagem: null,
-  });
-} else {
-  alert("Erro ao enviar o chamado!");
-}
+        alert(`Chamado ${result.id} aberto com sucesso!`);
+
+        setFormData({
+          setor: "",
+          profissional: "",
+          descricao: "",
+          prioridade: "Normal",
+          imagem: null,
+        });
+      } else {
+        alert("Erro ao enviar o chamado!");
+      }
     } catch (error) {
       console.error("Erro ao enviar:", error);
       alert("Erro ao enviar o chamado!");
@@ -91,19 +93,27 @@ const TicketForm = () => {
 
       <div className={styles.field}>
         <label>Setor:</label>
-        <select name="setor" value={formData.setor} onChange={handleChange} required>
+        <select
+          name="setor"
+          value={formData.setor}
+          onChange={handleChange}
+          required
+        >
           <option value="">Selecione o setor</option>
           {setoresHospital.map((setor) => (
-            <option key={setor} value={setor}>{setor}</option>
+            <option key={setor} value={setor}>
+              {setor}
+            </option>
           ))}
         </select>
       </div>
 
       <div className={styles.field}>
-        <label>Descrição:</label>
+        <label>Descrição do Problema:</label>
         <textarea
           name="descricao"
-          rows="3"
+          rows="4"
+          placeholder="Descreva o problema ou solicitação..."
           value={formData.descricao}
           onChange={handleChange}
           required
@@ -112,7 +122,11 @@ const TicketForm = () => {
 
       <div className={styles.field}>
         <label>Prioridade:</label>
-        <select name="prioridade" value={formData.prioridade} onChange={handleChange}>
+        <select
+          name="prioridade"
+          value={formData.prioridade}
+          onChange={handleChange}
+        >
           <option value="Baixa">Baixa</option>
           <option value="Normal">Normal</option>
           <option value="Alta">Alta</option>

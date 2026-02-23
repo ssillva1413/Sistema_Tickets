@@ -1,0 +1,92 @@
+.home {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.section {
+  position: relative; 
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 6rem;
+
+  background-image: url("/estado.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.8),  
+    rgba(255, 255, 255, 0.6),
+    rgba(255, 255, 255, 0.4)   
+  );
+
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+
+  z-index: 1;
+}
+
+.container {
+  background: #ffffff;
+  width: 100%;
+  max-width: 520px;
+  padding: 2rem 2.5rem;
+  border-radius: 18px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+   position: relative;
+  z-index: 2;
+}
+
+.title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #188e5a;
+  margin-bottom: 0.4rem;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  color: #666666;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+  .section {
+    padding-left: 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .section {
+    justify-content: center;
+    padding-left: 0;
+  }
+
+  .container {
+    max-width: 90%;
+    padding: 1.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 1.3rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+  }
+}
