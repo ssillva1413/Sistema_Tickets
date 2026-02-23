@@ -1,10 +1,4 @@
 {
-<<<<<<< HEAD
-  "dependencies": {
-    "html2canvas": "^1.4.1",
-    "jspdf": "^4.1.0"
-  }
-=======
   "name": "frontend",
   "private": true,
   "version": "0.0.0",
@@ -12,7 +6,6 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -37,19 +30,5 @@
     "globals": "^16.4.0",
     "nodemon": "^3.1.11",
     "vite": "^7.1.7"
-  },
-  "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
-  "main": "eslint.config.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ssillva1413/Sistema_Tickets.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/ssillva1413/Sistema_Tickets/issues"
-  },
-  "homepage": "https://github.com/ssillva1413/Sistema_Tickets#readme"
->>>>>>> 15a58625210d2ac5db5eec5160247d625558f066
+  }
 }
