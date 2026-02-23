@@ -1,0 +1,63 @@
+@keyframes shake {
+  0%, 100% {
+    transform: rotate(0deg); 
+  }
+  20% {
+    transform: rotate(10deg);
+  }
+  40% {
+    transform: rotate(-10deg);
+  }
+  60% {
+    transform: rotate(10deg); 
+  }
+  80% {
+    transform: rotate(-10deg);
+  }
+
+}
+
+.whatsapp {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #25d366;
+  color: white;
+  border-radius: 50%;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+  z-index: 1000;
+  text-decoration: none;
+
+  animation: shake 15s ease-in-out infinite;
+}
+
+@media (max-width: 768px) {
+  .whatsapp {
+    bottom: 15px;
+    right: 15px;
+    padding: 10px;
+  }
+
+  .whatsapp svg {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .whatsapp {
+    bottom: 12px;
+    right: 12px;
+    padding: 8px;
+  }
+
+  .whatsapp svg {
+    width: 28px;
+    height: 28px;
+  }
+}

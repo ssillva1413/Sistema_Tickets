@@ -3,12 +3,14 @@ import styles from "./Home.module.css";
 import Header from "../../components/Header";
 import TicketForm from "../../components/TicketForm";
 import Footer from "../../components/Footer";
+import WhatsAppButton from "../../components/WhatsAppButton";
 
 const Home = () => {
   return (
     <div className={styles.home}>
       <Header />
-      <section className={styles.section}>
+
+      <main className={styles.section}>
         <div className={styles.container}>
           <h1 className={styles.title}>Abertura de Chamado</h1>
           <p className={styles.subtitle}>
@@ -16,7 +18,8 @@ const Home = () => {
           </p>
           <TicketForm />
         </div>
-      </section>
+      </main>
+      <WhatsAppButton />
       <Footer />
     </div>
   );
