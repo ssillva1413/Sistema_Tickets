@@ -1,5 +1,5 @@
 .home {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
@@ -10,8 +10,7 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding-left: 6rem;
-
+  padding: 4rem 5vw; 
   background-image: url("/estado.jpg");
   background-size: cover;
   background-position: center;
@@ -61,18 +60,18 @@
 
 @media (max-width: 1024px) {
   .section {
-    padding-left: 3rem;
+    padding: 3rem 4vw;
   }
 }
 
 @media (max-width: 768px) {
   .section {
     justify-content: center;
-    padding-left: 0;
+    padding: 2rem;
   }
 
   .container {
-    max-width: 90%;
+    max-width: 95%;
     padding: 1.6rem;
   }
 }
@@ -89,4 +88,5 @@
   .subtitle {
     font-size: 0.9rem;
   }
+
 }
