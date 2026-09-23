@@ -1,16 +1,16 @@
 .page {
-  height: 100vh;          
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow: hidden;      
+  overflow: hidden;
 }
 
 .content {
   flex: 1;
   padding: 2rem;
-  display: flex;          
+  display: flex;
   flex-direction: column;
-  overflow: hidden;       
+  overflow: hidden;
 }
 
 .title {
@@ -73,15 +73,22 @@
   font-size: 1.8rem;
 }
 
-.cardAberto { background: #1976d2; }
-.cardAndamento { background: #fb8c00; }
-.cardFechado { background: #2e7d32; }
+.cardAberto {
+  background: #1976d2;
+}
 
+.cardAndamento {
+  background: #fb8c00;
+}
+
+.cardFechado {
+  background: #2e7d32;
+}
 
 .tableWrapper {
-  flex: 1;           
-  min-height: 0;      
-  overflow-y: auto;  
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
   border-radius: 14px;
   border: 1px solid #eee;
 }
@@ -116,9 +123,17 @@
   color: #fff;
 }
 
-.alta { background: #d32f2f; }
-.normal { background: #f9a825; }
-.baixa { background: #388e3c; }
+.alta {
+  background: #d32f2f;
+}
+
+.normal {
+  background: #f9a825;
+}
+
+.baixa {
+  background: #388e3c;
+}
 
 .status {
   min-width: 110px;
@@ -128,9 +143,17 @@
   color: #fff;
 }
 
-.aberto { background: #1976d2; }
-.emandamento { background: #fb8c00; }
-.fechado { background: #2e7d32; }
+.aberto {
+  background: #1976d2;
+}
+
+.emandamento {
+  background: #fb8c00;
+}
+
+.fechado {
+  background: #2e7d32;
+}
 
 .prazo {
   min-width: 130px;
@@ -141,11 +164,21 @@
   color: #fff;
 }
 
-.dentro { background: #2e7d32; }
-.vencido { background: #d32f2f; }
+.dentro {
+  background: #2e7d32;
+}
 
-.ok { background: #ffffff; }
-.atrasado { background: #ffebee; }
+.vencido {
+  background: #d32f2f;
+}
+
+.ok {
+  background: #ffffff;
+}
+
+.atrasado {
+  background: #ffebee;
+}
 
 .acoes {
   display: flex;
@@ -165,7 +198,9 @@
   cursor: pointer;
 }
 
-.detalhesBtn:hover { opacity: 0.9; }
+.detalhesBtn:hover {
+  opacity: 0.9;
+}
 
 .btnStart {
   background: #1976d2;
@@ -187,7 +222,9 @@
 }
 
 .btnStart:hover,
-.btnClose:hover { opacity: 0.85; }
+.btnClose:hover {
+  opacity: 0.85;
+}
 
 .empty {
   text-align: center;
@@ -221,6 +258,7 @@
   background: #188e5a !important;
   font-weight: bold;
 }
+
 .exportBtn {
   background: #188e5a;
   color: #fff;
@@ -249,6 +287,26 @@
   transform: scale(1.15);
 }
 
+.novoChamadoLink {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-left: 12rem;
+  color: #188e5a;
+  font-size: 1.24rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  height: fit-content;
+  align-self: center;
+  text-align: center;
+}
+
+.novoChamadoLink:hover {
+  color: #0f6e45;
+  text-decoration: underline;
+}
+
 @media (max-width: 768px) {
   .topBar {
     flex-direction: column;
@@ -256,8 +314,8 @@
 
   .table th,
   .table td {
-    font-size: 0.75rem;  
-    padding: 0.5rem;      
+    font-size: 0.75rem;
+    padding: 0.5rem;
   }
 
   .badge,

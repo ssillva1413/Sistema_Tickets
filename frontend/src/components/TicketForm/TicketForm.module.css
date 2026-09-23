@@ -1,37 +1,43 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: 1.4rem;
-  text-align: left;
-  background: #ffffff;
-  padding: 2rem;
-  border-radius: 14px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e4e4e4;
+  gap: 1rem;
+}
+
+.row {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.row .field {
+  flex: 1;
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.3rem;
 }
 
 .field label {
   font-weight: 600;
   color: #188e5a;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 }
 
 .field input,
 .field textarea,
 .field select {
-  padding: 0.8rem 0.9rem;
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+
   border: 1px solid #cfcfcf;
   border-radius: 10px;
-  font-size: 1rem;
-  color: #333;
+
+  font-size: 0.95rem;
+
   background: #fafafa;
-  transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+  transition: border-color 0.25s, box-shadow 0.25s;
 }
 
 .field input:focus,
@@ -44,55 +50,96 @@
 }
 
 .field textarea {
-  min-height: 100px;
+  min-height: 80px;
   resize: vertical;
 }
 
 .button {
   background-color: #188e5a;
   color: white;
-  font-size: 1.08rem;
+
+  font-size: 1rem;
   font-weight: 600;
+
   border: none;
-  border-radius: 12px;
-  padding: 0.95rem;
+  border-radius: 10px;
+
+  padding: 0.85rem;
+
   cursor: pointer;
   width: 100%;
-  transition: background 0.3s ease, transform 0.3s ease;
-  margin-top: 0.4rem;
+
+  transition: background 0.3s, transform 0.2s;
 }
 
 .button:hover {
   background-color: #146b46;
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .button:active {
-  transform: translateY(0px);
+  transform: translateY(0);
 }
 
 .field select {
   appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
 
   background-image: url("data:image/svg+xml;utf8,<svg fill='%23188e5a' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
   background-repeat: no-repeat;
-  background-position: right 12px center;
-  background-size: 18px;
+  background-position: right 10px center;
+  background-size: 16px;
+}
+.sucesso {
+  background-color: #e6f6ef;
+  border: 1px solid #188E5A;
+  color: #0f5132;
+  padding: 14px 18px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 14px;
+  position: relative;
+  overflow: hidden;
+}
 
-  cursor: pointer;
+.sucesso strong {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.sucesso span {
+  font-size: 13px;
+  color: #2f6b4f;
+}
+
+.progressBar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  background: #188E5A;
+  width: 100%;
+  animation: progress 10s linear forwards;
+}
+
+@keyframes progress {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
 }
 
 @media (max-width: 768px) {
-  .form {
-    padding: 1.4rem;
+
+  .row {
+    flex-direction: column;
   }
 
-  .button {
-    font-size: 1rem;
-  }
   .field textarea {
     min-height: 90px;
   }
+
 }

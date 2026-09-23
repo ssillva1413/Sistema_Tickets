@@ -1,0 +1,109 @@
+.esqueciSenha {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  padding: 20px;
+}
+
+.form {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form h1 {
+  margin: 0 0 10px;
+  text-align: center;
+  color: #188e5a;
+  font-size: 28px;
+}
+
+.subtitle {
+  margin: 0 0 25px;
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.form input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 13px 14px;
+  margin-bottom: 14px;
+  border: 1px solid #d6d6d6;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form input:focus {
+  border-color: #188e5a;
+}
+
+.form button[type="submit"] {
+  width: 100%;
+  padding: 13px;
+  margin-top: 4px;
+  border: none;
+  border-radius: 6px;
+  background: #188e5a;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.form button[type="submit"]:hover {
+  background: #147a4d;
+}
+
+.form button[type="submit"]:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.error {
+  margin: 0 0 16px;
+  padding: 10px;
+  border-radius: 6px;
+  background: #fdecec;
+  color: #c62828;
+  text-align: center;
+  font-size: 14px;
+}
+
+.success {
+  margin: 0 0 16px;
+  padding: 10px;
+  border-radius: 6px;
+  background: #eaf7f0;
+  color: #188e5a;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.links {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.links button {
+  border: none;
+  background: none;
+  color: #188e5a;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.links button:hover {
+  text-decoration: underline;
+}

@@ -1,42 +1,51 @@
-const usuarios = [
-  {
-    email: "suportehmaa@gmail.com",
-    senha: "P@ss-0338",
-    nome: "Saulo Silva",
-  },
-  {
-    email: "auxtihmaa@gmail.com",
-    senha: "P@ss-aux",
-    nome: "Agimiro Junior",
-  },
-  {
-    email: "andrezzahmaa@gmail.com",
-    senha: "P@ss-1234",
-    nome: "Andrezza Saraiva",
-  },
-];
+const API_URL = import.meta.env.VITE_API_URL;
 
-export const login = (email, senha) => {
-  const usuario = usuarios.find(
-    (u) => u.email === email && u.senha === senha
-  );
+export const login = async (email, senha) => {
+  try {
+    const response = await fetch(`${API_URL}/api/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        senha,
+      }),
+    });
 
-  if (!usuario) return false;
+    const data = await response.json();
 
-  const agora = new Date().getTime();
-  const expiraEm = agora + 4 * 60 * 60 * 1000; 
+    if (!response.ok) {
+      return {
+        sucesso: false,
+        erro: data.error || "E-mail ou senha inválidos",
+      };
+    }
 
-  localStorage.setItem(
-    "auth",
-    JSON.stringify({
-      autenticado: true,
-      nome: usuario.nome,
-      email: usuario.email,
-      expiraEm,
-    })
-  );
+    localStorage.setItem(
+      "auth",
+      JSON.stringify({
+        autenticado: true,
+        token: data.token,
+        id: data.usuario.id,
+        nome: data.usuario.nome,
+        email: data.usuario.email,
+        perfil: data.usuario.perfil,
+      })
+    );
 
-  return true;
+    return {
+      sucesso: true,
+      usuario: data.usuario,
+    };
+  } catch (error) {
+    console.error("Erro ao realizar login:", error);
+
+    return {
+      sucesso: false,
+      erro: "Não foi possível conectar ao servidor",
+    };
+  }
 };
 
 export const logout = () => {
@@ -45,22 +54,33 @@ export const logout = () => {
 
 export const isAuthenticated = () => {
   const data = localStorage.getItem("auth");
+
   if (!data) return false;
 
-  const auth = JSON.parse(data);
-  const agora = new Date().getTime();
+  try {
+    const auth = JSON.parse(data);
 
-  if (agora > auth.expiraEm) {
+    return auth.autenticado === true && !!auth.token;
+  } catch {
     logout();
     return false;
   }
-
-  return auth.autenticado;
 };
 
 export const getUsuario = () => {
   const data = localStorage.getItem("auth");
+
   if (!data) return null;
 
-  return JSON.parse(data);
+  try {
+    return JSON.parse(data);
+  } catch {
+    logout();
+    return null;
+  }
+};
+
+export const getToken = () => {
+  const usuario = getUsuario();
+  return usuario?.token || null;
 };

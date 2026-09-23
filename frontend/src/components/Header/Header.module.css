@@ -1,13 +1,18 @@
 .header {
   width: 100%;
-  height: 80px;
-  background-color: #ffffff; 
+  min-height: 80px;
+  background-color: #ffffff;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   padding: 0 2rem;
-  border-bottom: 1.5px solid  #188E5A; 
+  box-sizing: border-box;
+
+  border-bottom: 1.5px solid #188e5a;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
   position: sticky;
   top: 0;
   z-index: 100;
@@ -17,20 +22,51 @@
   display: flex;
   align-items: center;
   gap: 1rem;
+  flex-shrink: 0;
 }
 
 .logo img {
   height: 60px;
   width: auto;
+  object-fit: contain;
 }
 
 .title {
-  color:  #188E5A; 
+  color: #188e5a;
   font-size: 1.4rem;
   font-weight: 600;
 }
 
-.nav a,
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-left: auto;
+}
+
+.navLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  text-decoration: none;
+  color: #188e5a;
+
+  font-weight: 500;
+  font-size: 0.95rem;
+
+  white-space: nowrap;
+  cursor: pointer;
+
+  transition: color 0.2s ease;
+}
+
+.navLink:hover {
+  color: #106b42;
+  text-decoration: underline;
+}
+
 .link {
   text-decoration: none;
   color: #188e5a;
@@ -38,13 +74,8 @@
   cursor: pointer;
 }
 
-.nav a:hover,
 .link:hover {
-  text-decoration: underline;
-}
-
-.nav a:hover,
-.link:hover {
+  color: #106b42;
   text-decoration: underline;
 }
 
@@ -63,14 +94,23 @@
   font-weight: 600;
   cursor: pointer;
 }
+
 .userCenter {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
+
   color: #188e5a;
   font-weight: 500;
   font-size: 0.95rem;
+
   white-space: nowrap;
+  pointer-events: none;
+}
+
+.navLink:focus-visible {
+  outline: 3px solid rgba(24, 142, 90, 0.3);
+  outline-offset: 3px;
 }
 
 @media (max-width: 768px) {
@@ -78,27 +118,30 @@
     flex-direction: column;
     height: auto;
     padding: 1rem;
-    gap: 0.5rem;
+    gap: 0.8rem;
   }
 
   .logo {
-    flex-direction: column;
-    text-align: center;
+    justify-content: center;
   }
 
-  .title {
-    font-size: 1.2rem;
+  .logo img {
+    height: 50px;
   }
 
   .nav {
-    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+    margin-left: 0;
   }
 
   .userCenter {
-    position: static;    
-    transform: none;     
+    position: static;
+    transform: none;
+
+    text-align: center;
     font-size: 0.9rem;
-    white-space: normal; 
+    white-space: normal;
   }
 }
-

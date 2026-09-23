@@ -1,0 +1,162 @@
+.confirmarEmail {
+  min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  padding: 2rem;
+  background: #fff;
+
+  text-align: center;
+}
+
+.logo {
+  width: 130px;
+  height: 75px;
+
+  object-fit: contain;
+  object-position: center;
+
+  border-radius: 6px;
+  display: block;
+  margin-right: 1rem;
+}
+
+.conteudo {
+  max-width: 600px;
+  text-align: center;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.conteudo h1 {
+  color: #188e5a;
+  font-size: 1.5rem;
+
+  margin: 0 0 0.8rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.conteudo > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.conteudo h2 {
+  color: #333;
+  font-size: 1.15rem;
+
+  margin: 0 0 0.35rem;
+}
+
+.conteudo p {
+  color: #666;
+  font-size: 0.88rem;
+  line-height: 1.35;
+
+  margin: 0 0 0.3rem;
+}
+
+.detalhe {
+  font-size: 0.8rem !important;
+  color: #777 !important;
+
+  margin-top: 0.4rem !important;
+}
+
+.iconeSucesso,
+.iconeErro {
+  display: none;
+}
+
+.mensagemErro {
+  color: #d32f2f !important;
+  background: #fff4f4;
+
+  padding: 0.5rem 0.7rem;
+  border-radius: 6px;
+
+  display: inline-block;
+
+  margin: 0 0 0.3rem !important;
+}
+
+.conteudo button {
+  margin-top: 0.6rem;
+
+  background: #188e5a;
+  color: #fff;
+
+  border: none;
+
+  padding: 0.6rem 1.2rem;
+
+  border-radius: 7px;
+
+  cursor: pointer;
+
+  font-weight: 500;
+  font-size: 0.88rem;
+}
+
+.conteudo button:hover {
+  opacity: 0.9;
+}
+
+.spinner {
+  width: 28px;
+  height: 28px;
+
+  border: 3px solid #e5e5e5;
+  border-top: 3px solid #188e5a;
+
+  border-radius: 50%;
+
+  animation: girar 0.8s linear infinite;
+
+  margin-bottom: 0.6rem;
+}
+
+@keyframes girar {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 600px) {
+  .confirmarEmail {
+    padding: 1.5rem;
+  }
+
+  .logo {
+    width: 110px;
+    height: 65px;
+    margin-right: 0.7rem;
+  }
+
+  .conteudo h1 {
+    font-size: 1.3rem;
+  }
+
+  .conteudo h2 {
+    font-size: 1.1rem;
+  }
+
+  .conteudo p {
+    font-size: 0.86rem;
+  }
+}

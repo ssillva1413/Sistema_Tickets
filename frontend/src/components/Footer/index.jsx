@@ -16,7 +16,7 @@ const Footer = () => {
           fontWeight: "500",
         }}
       >
-        🔗 Ver repositório no GitHub
+        
       </a>
     </footer>
   );
