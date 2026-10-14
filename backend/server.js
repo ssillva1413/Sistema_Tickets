@@ -13,6 +13,7 @@ const {
   enviarEmailConfirmacao,
   enviarEmailRecuperacaoSenha,
   enviarEmailChamadoResolvido,
+  enviarEmailNovoComentario,
 } = require("./email");
 
 const app = express();
@@ -850,7 +851,6 @@ app.put(
           ]
         );
       } else if (status === "Fechado") {
-
         const ticketResult = await pool.query(
           `SELECT
             t.id,
@@ -933,7 +933,6 @@ app.put(
             }
           );
         }
-
       } else {
         await pool.query(
           `UPDATE tickets
@@ -991,16 +990,7 @@ app.post(
   async (req, res) => {
     try {
       const { id } = req.params;
-
-      const { mensagem } = req.body;
-
-      const usuario = req.usuario.nome;
-
-      console.log("Recebendo comentário:", {
-        ticket_id: id,
-        usuario,
-        mensagem,
-      });
+      const mensagem = req.body.mensagem?.trim();
 
       if (!mensagem) {
         return res.status(400).json({
@@ -1008,6 +998,62 @@ app.post(
         });
       }
 
+      // Confirma a existência do chamado e obtém o solicitante.
+      const ticketResult = await pool.query(
+        `SELECT
+          t.id,
+          t.usuario_id,
+          u.email AS usuario_email
+        FROM tickets t
+        LEFT JOIN usuarios u
+          ON u.id = t.usuario_id
+        WHERE t.id = $1`,
+        [id]
+      );
+
+      if (ticketResult.rows.length === 0) {
+        return res.status(404).json({
+          error: "Chamado não encontrado",
+        });
+      }
+
+      const ticket = ticketResult.rows[0];
+
+      // Usa o perfil atual do banco, em vez de confiar
+      // exclusivamente no perfil contido no token.
+      const autorResult = await pool.query(
+        `SELECT
+          id,
+          nome,
+          email,
+          perfil,
+          ativo
+        FROM usuarios
+        WHERE id = $1`,
+        [req.usuario.id]
+      );
+
+      if (
+        autorResult.rows.length === 0 ||
+        !autorResult.rows[0].ativo
+      ) {
+        return res.status(403).json({
+          error: "Usuário não encontrado ou inativo.",
+        });
+      }
+
+      const autor = autorResult.rows[0];
+      const emailAutor = String(autor.email || "")
+        .trim()
+        .toLowerCase();
+
+      // A conta administradora é considerada parte da equipe
+      // mesmo que ainda esteja cadastrada com perfil "usuario".
+      const autorEhEquipeTI =
+        autor.perfil === "ti" ||
+        emailAutor === "suportehmaa@gmail.com";
+
+      // O comentário é registrado antes das notificações.
       await pool.query(
         `INSERT INTO comentarios
         (ticket_id, usuario, mensagem)
@@ -1015,19 +1061,103 @@ app.post(
         ($1, $2, $3)`,
         [
           id,
-          usuario,
+          autor.nome,
           mensagem,
         ]
       );
 
-      res.json({
+      try {
+        let destinatarios = [];
+
+        if (autorEhEquipeTI) {
+          // Comentário da TI/administrador:
+          // notifica somente quem abriu o chamado.
+          if (ticket.usuario_email) {
+            destinatarios = [ticket.usuario_email];
+          }
+        } else {
+          // Comentário do usuário comum:
+          // notifica todos os membros ativos da equipe de TI
+          // e inclui a conta administradora especial, se ativa.
+          const equipeResult = await pool.query(
+            `SELECT email
+            FROM usuarios
+            WHERE ativo = TRUE
+              AND email IS NOT NULL
+              AND TRIM(email) <> ''
+              AND (
+                perfil = 'ti'
+                OR LOWER(TRIM(email)) = $1
+              )`,
+            ["suportehmaa@gmail.com"]
+          );
+
+          destinatarios = equipeResult.rows.map(
+            (membro) => membro.email
+          );
+        }
+
+        // Remove destinatários duplicados.
+        destinatarios = [
+          ...new Map(
+            destinatarios
+              .filter(
+                (email) =>
+                  typeof email === "string" &&
+                  email.trim() !== ""
+              )
+              .map((email) => [
+                email.trim().toLowerCase(),
+                email.trim(),
+              ])
+          ).values(),
+        ];
+
+        if (destinatarios.length === 0) {
+          console.warn(
+            `Comentário do chamado #${id} registrado, mas nenhum destinatário foi encontrado.`
+          );
+        } else {
+          // Cada destinatário recebe apenas uma notificação.
+          // O e-mail não contém o texto do comentário.
+          const resultados = await Promise.allSettled(
+            destinatarios.map((email) =>
+              enviarEmailNovoComentario({
+                chamadoId: ticket.id,
+                autorComentario: autor.nome,
+                emailSolicitante: email,
+                emailSuporte: null,
+              })
+            )
+          );
+
+          resultados.forEach((resultado, indice) => {
+            if (resultado.status === "rejected") {
+              console.error(
+                `Falha ao notificar ${destinatarios[indice]} sobre o chamado #${id}:`,
+                resultado.reason
+              );
+            }
+          });
+        }
+      } catch (emailError) {
+        // Falhas em consultas ou no envio de e-mails não apagam
+        // o comentário que já foi salvo.
+        console.error(
+          `Comentário do chamado #${id} registrado, mas houve uma falha nas notificações:`,
+          emailError
+        );
+      }
+
+      return res.json({
         success: true,
+        mensagem: "Comentário registrado com sucesso.",
       });
     } catch (err) {
-      console.error("ERRO REAL:", err);
+      console.error("Erro ao registrar comentário:", err);
 
-      res.status(500).json({
-        error: err.message,
+      return res.status(500).json({
+        error: "Erro ao registrar comentário",
       });
     }
   }

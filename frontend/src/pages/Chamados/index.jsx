@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import styles from "./Chamados.module.css";
+
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import ModalChamado from "../../components/ModalChamado";
+
 import { getUsuario, getToken } from "../../services/auth";
+
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 const Chamados = () => {
   const navigate = useNavigate();
+
   const [tickets, setTickets] = useState([]);
   const [filtroStatus, setFiltroStatus] = useState("Todos");
   const [filtroPrioridade, setFiltroPrioridade] = useState("Todas");
@@ -18,8 +24,16 @@ const Chamados = () => {
   const [modalAberto, setModalAberto] = useState(false);
   const [chamadoSelecionado, setChamadoSelecionado] = useState(null);
   const [paginaAtual, setPaginaAtual] = useState(1);
+
   const itensPorPagina = 20;
+
   const usuarioLogado = getUsuario();
+
+  // Somente usuários comuns podem criar chamados.
+  const podeCriarChamado =
+    usuarioLogado?.perfil !== "ti" &&
+    usuarioLogado?.email?.trim().toLowerCase() !==
+      "suportehmaa@gmail.com";
 
   const carregarTickets = async () => {
     try {
@@ -39,7 +53,6 @@ const Chamados = () => {
       }
 
       setTickets(data);
-
       setPaginaAtual(1);
     } catch (error) {
       console.error("Erro ao buscar chamados:", error);
@@ -58,13 +71,10 @@ const Chamados = () => {
         `${API_URL}/api/tickets/${id}/status`,
         {
           method: "PUT",
-
           headers: {
             "Content-Type": "application/json",
-
             Authorization: `Bearer ${token}`,
           },
-
           body: JSON.stringify({
             status: novoStatus,
           }),
@@ -105,7 +115,6 @@ const Chamados = () => {
 
   const diasPorPrioridade = (prioridade) => {
     if (prioridade === "Alta") return 3;
-
     if (prioridade === "Normal") return 5;
 
     return 7;
@@ -113,12 +122,10 @@ const Chamados = () => {
 
   const calcularPrazo = (ticket) => {
     const criado = new Date(ticket.criado_em);
-
     const prazo = new Date(criado);
 
     prazo.setDate(
-      criado.getDate() +
-        diasPorPrioridade(ticket.prioridade)
+      criado.getDate() + diasPorPrioridade(ticket.prioridade)
     );
 
     return prazo;
@@ -130,7 +137,6 @@ const Chamados = () => {
     }
 
     const hoje = new Date();
-
     const prazo = calcularPrazo(ticket);
 
     const diff = Math.ceil(
@@ -154,7 +160,6 @@ const Chamados = () => {
     }
 
     const hoje = new Date();
-
     const prazo = calcularPrazo(ticket);
 
     return prazo < hoje ? "atrasado" : "ok";
@@ -192,8 +197,7 @@ const Chamados = () => {
     ticketsFiltrados.length / itensPorPagina
   );
 
-  const inicio =
-    (paginaAtual - 1) * itensPorPagina;
+  const inicio = (paginaAtual - 1) * itensPorPagina;
 
   const ticketsPaginados = ticketsFiltrados.slice(
     inicio,
@@ -236,7 +240,6 @@ const Chamados = () => {
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(dados);
-
     const workbook = XLSX.utils.book_new();
 
     XLSX.utils.book_append_sheet(
@@ -251,8 +254,7 @@ const Chamados = () => {
     });
 
     const fileData = new Blob([excelBuffer], {
-      type:
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
     });
 
     saveAs(fileData, "chamados.xlsx");
@@ -273,25 +275,12 @@ const Chamados = () => {
           <div className={styles.filters}>
             <select
               value={filtroStatus}
-              onChange={(e) =>
-                setFiltroStatus(e.target.value)
-              }
+              onChange={(e) => setFiltroStatus(e.target.value)}
             >
-              <option value="Todos">
-                Todos os Status
-              </option>
-
-              <option value="Aberto">
-                Aberto
-              </option>
-
-              <option value="Em andamento">
-                Em andamento
-              </option>
-
-              <option value="Fechado">
-                Fechado
-              </option>
+              <option value="Todos">Todos os Status</option>
+              <option value="Aberto">Aberto</option>
+              <option value="Em andamento">Em andamento</option>
+              <option value="Fechado">Fechado</option>
             </select>
 
             <select
@@ -300,21 +289,10 @@ const Chamados = () => {
                 setFiltroPrioridade(e.target.value)
               }
             >
-              <option value="Todas">
-                Todas as Prioridades
-              </option>
-
-              <option value="Alta">
-                Alta
-              </option>
-
-              <option value="Normal">
-                Normal
-              </option>
-
-              <option value="Baixa">
-                Baixa
-              </option>
+              <option value="Todas">Todas as Prioridades</option>
+              <option value="Alta">Alta</option>
+              <option value="Normal">Normal</option>
+              <option value="Baixa">Baixa</option>
             </select>
 
             <label className={styles.filtroVencidos}>
@@ -336,13 +314,16 @@ const Chamados = () => {
               Exportar XLSX
             </button>
 
-            <button
-              className={styles.novoChamadoLink}
-              onClick={abrirNovoChamado}
-              title="Abrir novo chamado"
-            >
-              + Novo chamado
-            </button>
+            {/* O botão de criação aparece somente para usuários comuns. */}
+            {podeCriarChamado && (
+              <button
+                className={styles.novoChamadoLink}
+                onClick={abrirNovoChamado}
+                title="Abrir novo chamado"
+              >
+                + Novo chamado
+              </button>
+            )}
           </div>
 
           <div className={styles.cards}>
@@ -350,7 +331,6 @@ const Chamados = () => {
               className={`${styles.card} ${styles.cardAberto}`}
             >
               <span>Abertos</span>
-
               <strong>{totalAbertos}</strong>
             </div>
 
@@ -358,7 +338,6 @@ const Chamados = () => {
               className={`${styles.card} ${styles.cardAndamento}`}
             >
               <span>Em andamento</span>
-
               <strong>{totalEmAndamento}</strong>
             </div>
 
@@ -366,7 +345,6 @@ const Chamados = () => {
               className={`${styles.card} ${styles.cardFechado}`}
             >
               <span>Fechados</span>
-
               <strong>{totalFechados}</strong>
             </div>
           </div>
@@ -381,11 +359,8 @@ const Chamados = () => {
                 {usuarioLogado?.perfil === "ti" && (
                   <>
                     <th>Profissional</th>
-
                     <th>Setor</th>
-
                     <th>Descrição</th>
-
                     <th>Img</th>
                   </>
                 )}
@@ -393,13 +368,11 @@ const Chamados = () => {
                 {usuarioLogado?.perfil !== "ti" && (
                   <>
                     <th>Descrição</th>
-
                     <th>Setor</th>
                   </>
                 )}
 
                 <th>Criado em</th>
-
                 <th>Prazo</th>
 
                 {usuarioLogado?.perfil === "ti" && (
@@ -407,7 +380,6 @@ const Chamados = () => {
                 )}
 
                 <th>Status</th>
-
                 <th>Ações</th>
               </tr>
             </thead>
@@ -419,18 +391,14 @@ const Chamados = () => {
                 return (
                   <tr
                     key={ticket.id}
-                    className={
-                      styles[statusPrazo(ticket)]
-                    }
+                    className={styles[statusPrazo(ticket)]}
                   >
                     <td>{ticket.id}</td>
 
                     {usuarioLogado?.perfil === "ti" && (
                       <>
                         <td>{ticket.profissional}</td>
-
                         <td>{ticket.setor}</td>
-
                         <td>{ticket.descricao}</td>
 
                         <td>
@@ -470,14 +438,11 @@ const Chamados = () => {
                     {usuarioLogado?.perfil !== "ti" && (
                       <>
                         <td>{ticket.descricao}</td>
-
                         <td>{ticket.setor}</td>
                       </>
                     )}
 
-                    <td>
-                      {formatarData(ticket.criado_em)}
-                    </td>
+                    <td>{formatarData(ticket.criado_em)}</td>
 
                     <td>
                       <span
@@ -485,8 +450,7 @@ const Chamados = () => {
                           "pt-BR"
                         )}`}
                         className={`${styles.prazo} ${
-                          statusPrazo(ticket) ===
-                          "atrasado"
+                          statusPrazo(ticket) === "atrasado"
                             ? styles.vencido
                             : styles.dentro
                         }`}
@@ -499,9 +463,7 @@ const Chamados = () => {
                       <td>
                         <span
                           className={`${styles.badge} ${
-                            styles[
-                              ticket.prioridade.toLowerCase()
-                            ]
+                            styles[ticket.prioridade.toLowerCase()]
                           }`}
                         >
                           {ticket.prioridade}
@@ -526,9 +488,7 @@ const Chamados = () => {
                     <td className={styles.acoes}>
                       <button
                         className={styles.detalhesBtn}
-                        onClick={() =>
-                          abrirDetalhes(ticket)
-                        }
+                        onClick={() => abrirDetalhes(ticket)}
                       >
                         Detalhes
                       </button>
@@ -549,8 +509,7 @@ const Chamados = () => {
                             </button>
                           )}
 
-                          {ticket.status ===
-                            "Em andamento" && (
+                          {ticket.status === "Em andamento" && (
                             <button
                               className={styles.btnClose}
                               onClick={() =>
@@ -574,9 +533,7 @@ const Chamados = () => {
                 <tr>
                   <td
                     colSpan={
-                      usuarioLogado?.perfil === "ti"
-                        ? "10"
-                        : "7"
+                      usuarioLogado?.perfil === "ti" ? "10" : "7"
                     }
                     className={styles.empty}
                   >
@@ -604,9 +561,7 @@ const Chamados = () => {
             </span>
 
             <button
-              disabled={
-                paginaAtual === totalPaginas
-              }
+              disabled={paginaAtual === totalPaginas}
               onClick={() =>
                 setPaginaAtual(paginaAtual + 1)
               }

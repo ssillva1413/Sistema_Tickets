@@ -1,8 +1,8 @@
+
 require("dotenv").config();
 
 const nodemailer = require("nodemailer");
 const path = require("path");
-
 
 const logoHospital = path.join(
   __dirname,
@@ -291,7 +291,6 @@ Caso o problema persista, entre em contato com a equipe de TI.`,
             margin: 20px 0;
           "
         >
-
           <p style="margin: 5px 0;">
             <strong>Chamado:</strong> #${chamadoId}
           </p>
@@ -315,11 +314,10 @@ Caso o problema persista, entre em contato com a equipe de TI.`,
           <p style="margin: 5px 0;">
             <strong>Data de fechamento:</strong> ${dataFechamento}
           </p>
-
         </div>
 
         <p>
-          O chamado foi marcado como resolvido.         
+          O chamado foi marcado como resolvido.
         </p>
 
         <p>
@@ -341,8 +339,159 @@ Caso o problema persista, entre em contato com a equipe de TI.`,
   return info;
 };
 
+// Escapa caracteres especiais para inserir valores com segurança no HTML.
+const escaparHtml = (valor) =>
+  String(valor ?? "").replace(/[&<>"']/g, (caractere) => {
+    const entidades = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    };
+
+    return entidades[caractere];
+  });
+
+// Notifica o suporte e o solicitante de que houve um novo comentário.
+// O texto do comentário não é incluído no e-mail.
+const enviarEmailNovoComentario = async ({
+  chamadoId,
+  autorComentario,
+  emailSolicitante,
+  emailSuporte,
+}) => {
+  const destinatarios = new Map();
+
+  [emailSuporte, emailSolicitante].forEach((email) => {
+    if (typeof email !== "string" || !email.trim()) {
+      return;
+    }
+
+    const emailNormalizado = email.trim().toLowerCase();
+
+    // Evita notificar duas vezes o mesmo endereço.
+    if (!destinatarios.has(emailNormalizado)) {
+      destinatarios.set(emailNormalizado, email.trim());
+    }
+  });
+
+  if (destinatarios.size === 0) {
+    console.warn(
+      `Nenhum destinatário válido para o comentário do chamado #${chamadoId}.`
+    );
+
+    return [];
+  }
+
+  const autorSeguro = escaparHtml(autorComentario);
+
+  const assunto =
+    `Novo comentário no chamado #${chamadoId} - Sistema de Chamados HMAA`;
+
+  const emails = [...destinatarios.values()];
+
+  const mensagens = emails.map((email) =>
+    transporter.sendMail({
+      from: `"Sistema de Chamados HMAA" <${process.env.SMTP_USER}>`,
+      to: email,
+      subject: assunto,
+
+      text: `Olá!
+
+${autorComentario || "Um usuário"} adicionou um comentário ao chamado #${chamadoId}.
+
+Para consultar o histórico e os detalhes, acesse o Sistema de Chamados HMAA.
+
+Por segurança, o conteúdo do comentário não está incluído nesta notificação.
+
+Hospital e Maternidade Agenor Araújo`,
+
+      attachments: [
+        {
+          filename: "Novologo.jpg",
+          path: logoHospital,
+          cid: "logo-hmaa",
+        },
+      ],
+
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+
+          <div style="text-align: center; margin-bottom: 25px;">
+            <img
+              src="cid:logo-hmaa"
+              alt="Hospital e Maternidade Agenor Araújo"
+              style="max-width: 220px; width: 100%; height: auto;"
+            />
+          </div>
+
+          <h2 style="color: #188e5a; text-align: center;">
+            Sistema de Chamados HMAA
+          </h2>
+
+          <h3 style="color: #188e5a;">
+            Novo comentário no chamado #${chamadoId}
+          </h3>
+
+          <p>
+            Um novo comentário foi registrado no sistema.
+          </p>
+
+          <div style="background-color: #f4f7f6; border-left: 4px solid #188e5a; padding: 15px; margin: 20px 0;">
+            <p style="margin: 5px 0;">
+              <strong>Chamado:</strong> #${chamadoId}
+            </p>
+
+            <p style="margin: 5px 0;">
+              <strong>Comentário adicionado por:</strong>
+              ${autorSeguro || "Usuário não identificado"}
+            </p>
+          </div>
+
+          <p>
+            Acesse o Sistema de Chamados HMAA para consultar
+            o histórico e os detalhes dessa interação.
+          </p>
+
+          <p style="font-size: 13px; color: #666;">
+            Por segurança, o conteúdo do comentário não está
+            incluído nesta notificação.
+          </p>
+
+          <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;" />
+
+          <p style="font-size: 12px; color: #777; text-align: center;">
+            Hospital e Maternidade Agenor Araújo
+          </p>
+
+        </div>
+      `,
+    })
+  );
+
+  const resultados = await Promise.allSettled(mensagens);
+
+  resultados.forEach((resultado, indice) => {
+    if (resultado.status === "fulfilled") {
+      console.log(
+        "Notificação de comentário enviada:",
+        resultado.value.messageId
+      );
+    } else {
+      console.error(
+        `Falha ao notificar ${emails[indice]} sobre o chamado #${chamadoId}:`,
+        resultado.reason
+      );
+    }
+  });
+
+  return resultados;
+};
+
 module.exports = {
   enviarEmailConfirmacao,
   enviarEmailRecuperacaoSenha,
   enviarEmailChamadoResolvido,
+  enviarEmailNovoComentario,
 };

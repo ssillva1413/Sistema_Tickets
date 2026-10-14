@@ -1,19 +1,28 @@
+
 .overlay {
   position: fixed;
   inset: 0;
+  padding: 16px;
+  box-sizing: border-box;
   background: rgba(0, 0, 0, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 999;
+  overflow: hidden;
 }
 
 .modal {
+  display: flex;
+  flex-direction: column;
   background: #fff;
   width: 100%;
   max-width: 700px;
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
   border-radius: 14px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
 }
 
 .printHeader {
@@ -41,32 +50,50 @@
   color: #444;
 }
 
+/* Cabeçalho permanece visível enquanto o conteúdo rola. */
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
+  flex: 0 0 auto;
   padding: 1rem 1.4rem;
   border-bottom: 2px solid #188e5a;
+  background: #fff;
 }
 
 .header h2 {
+  margin: 0;
   font-size: 1.1rem;
   color: #188e5a;
 }
 
 .headerActions {
   display: flex;
+  align-items: center;
   gap: 0.6rem;
+  flex-shrink: 0;
 }
 
-.header button {
+.headerActions button {
   border: none;
   background: none;
   font-size: 1.2rem;
   cursor: pointer;
+  color: #222;
+  padding: 4px;
 }
 
+.headerActions button:hover {
+  color: #188e5a;
+}
+
+/* A rolagem geral fica limitada ao conteúdo, não ao cabeçalho. */
 .content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 1.4rem;
   font-size: 0.95rem;
 }
@@ -83,6 +110,7 @@
   margin-top: 0.3rem;
   color: #333;
   line-height: 1.4;
+  overflow-wrap: anywhere;
 }
 
 .grid {
@@ -93,52 +121,87 @@
   font-size: 0.9rem;
 }
 
+.grid span {
+  overflow-wrap: anywhere;
+}
+
 .grid span strong {
   color: #222;
 }
 
-hr {
+.content hr {
   margin: 1.4rem 0;
   border: none;
   border-top: 1px solid #dcdcdc;
 }
 
-.content > div:last-child {
+.comentarios {
   margin-top: 1rem;
 }
 
-.content > div:last-child strong {
+.tituloComentarios {
   display: block;
   margin-bottom: 0.6rem;
   color: #188e5a;
 }
 
-.content > div:last-child > div > div {
+/* Área própria para rolar os comentários. */
+.listaComentarios {
+  max-height: 230px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  padding: 2px 6px 2px 0;
+  margin-bottom: 0.5rem;
+  border-radius: 8px;
+}
+
+.comentarioItem {
   background: #f7f7f7;
   border-radius: 8px;
   padding: 0.6rem 0.8rem;
   margin-bottom: 0.5rem;
   font-size: 0.85rem;
   line-height: 1.4;
+  overflow-wrap: anywhere;
 }
 
-.content > div:last-child > div > div b + * {
-  margin-left: 6px;
+.comentarioItem:last-child {
+  margin-bottom: 0;
+}
+
+.comentarioHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+  margin-bottom: 4px;
+}
+
+.comentarioHeader b {
+  color: #188e5a;
+}
+
+.comentarioHeader span {
   color: #666;
   font-size: 0.8rem;
 }
 
-.content > div:last-child > div > div div {
-  margin-top: 4px;
+.comentarioMensagem {
   color: #333;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
-
-.content > div:last-child > div > div b {
-  color: #188e5a;
+.semComentarios {
+  color: #444;
+  font-size: 0.9rem;
+  margin: 0;
+  padding: 0.4rem 0;
 }
 
-.content textarea {
+.textarea {
+  display: block;
   width: 100%;
   min-height: 70px;
   margin-top: 8px;
@@ -146,20 +209,39 @@ hr {
   border: 1px solid #cfcfcf;
   border-radius: 8px;
   font-size: 0.9rem;
+  font-family: inherit;
   resize: vertical;
   box-sizing: border-box;
 }
 
-.content textarea:focus {
+.textarea:focus {
   outline: none;
   border-color: #188e5a;
   box-shadow: 0 0 4px rgba(24, 142, 90, 0.25);
 }
 
-.content button {
-  margin-top: 6px;
+.botaoEnviar {
+  margin-top: 8px;
+  padding: 0.65rem 1rem;
+  border: 1px solid #188e5a;
+  border-radius: 6px;
+  background: #188e5a;
+  color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
 }
 
+.botaoEnviar:hover:not(:disabled) {
+  background: #146b46;
+}
+
+.botaoEnviar:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Impressão da ficha completa, sem barras de rolagem. */
 @media print {
   @page {
     margin: 2cm;
@@ -179,19 +261,24 @@ hr {
     position: static !important;
     display: block !important;
     background: none !important;
+    padding: 0 !important;
+    overflow: visible !important;
   }
 
   .modal {
+    display: block !important;
     visibility: visible;
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     max-width: 100%;
+    max-height: none !important;
     margin: 0;
     padding: 0;
     box-shadow: none;
     border-radius: 0;
+    overflow: visible !important;
   }
 
   .modal * {
@@ -204,7 +291,7 @@ hr {
   }
 
   .headerActions {
-    display: none;
+    display: none !important;
   }
 
   .header {
@@ -217,18 +304,30 @@ hr {
     padding: 0;
     margin-top: 1.2rem;
     font-size: 12pt;
+    overflow: visible !important;
   }
 
-  textarea,
-  button {
+  .listaComentarios {
+    max-height: none !important;
+    overflow: visible !important;
+    padding: 0;
+  }
+
+  .textarea,
+  .botaoEnviar {
     display: none !important;
   }
 }
 
 @media (max-width: 600px) {
+  .overlay {
+    padding: 10px;
+  }
+
   .modal {
-    max-width: 95%;
-    margin: 10px;
+    max-width: 100%;
+    max-height: calc(100vh - 20px);
+    max-height: calc(100dvh - 20px);
     border-radius: 12px;
   }
 
@@ -250,12 +349,24 @@ hr {
     font-size: 1rem;
   }
 
-  .content > div:last-child > div > div {
+  .headerActions button {
+    font-size: 1.3rem;
+  }
+
+  .listaComentarios {
+    max-height: 200px;
+  }
+
+  .comentarioItem {
     font-size: 0.9rem;
     padding: 0.7rem;
   }
 
-  .header button {
-    font-size: 1.4rem;
+  .comentarioHeader span {
+    font-size: 0.8rem;
+  }
+
+  .textarea {
+    font-size: 0.9rem;
   }
 }

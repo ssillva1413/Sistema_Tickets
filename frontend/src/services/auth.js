@@ -1,4 +1,17 @@
 const API_URL = import.meta.env.VITE_API_URL;
+const TEMPO_INATIVIDADE = 30 * 60 * 1000;
+const INTERVALO_REGISTRO_ATIVIDADE = 5000; 
+const CHAVE_ULTIMA_ATIVIDADE = "ultimaAtividade";
+const EMAIL_ADMIN = "suportehmaa@gmail.com";
+
+const perfilIsento = (usuario) => {
+  if (!usuario) return false;
+
+  return (
+    usuario.email?.trim().toLowerCase() === EMAIL_ADMIN ||
+    usuario.perfil === "ti"
+  );
+};
 
 export const login = async (email, senha) => {
   try {
@@ -22,7 +35,8 @@ export const login = async (email, senha) => {
       };
     }
 
-    localStorage.setItem(
+    // A sessão fica isolada nesta aba do navegador.
+    sessionStorage.setItem(
       "auth",
       JSON.stringify({
         autenticado: true,
@@ -32,6 +46,12 @@ export const login = async (email, senha) => {
         email: data.usuario.email,
         perfil: data.usuario.perfil,
       })
+    );
+
+    // Registra a atividade somente nesta aba.
+    sessionStorage.setItem(
+      CHAVE_ULTIMA_ATIVIDADE,
+      Date.now().toString()
     );
 
     return {
@@ -49,26 +69,12 @@ export const login = async (email, senha) => {
 };
 
 export const logout = () => {
-  localStorage.removeItem("auth");
-};
-
-export const isAuthenticated = () => {
-  const data = localStorage.getItem("auth");
-
-  if (!data) return false;
-
-  try {
-    const auth = JSON.parse(data);
-
-    return auth.autenticado === true && !!auth.token;
-  } catch {
-    logout();
-    return false;
-  }
+  sessionStorage.removeItem("auth");
+  sessionStorage.removeItem(CHAVE_ULTIMA_ATIVIDADE);
 };
 
 export const getUsuario = () => {
-  const data = localStorage.getItem("auth");
+  const data = sessionStorage.getItem("auth");
 
   if (!data) return null;
 
@@ -83,4 +89,86 @@ export const getUsuario = () => {
 export const getToken = () => {
   const usuario = getUsuario();
   return usuario?.token || null;
+};
+
+export const isAuthenticated = () => {
+  const usuario = getUsuario();
+
+  if (
+    !usuario ||
+    usuario.autenticado !== true ||
+    !usuario.token
+  ) {
+    return false;
+  }
+
+  // Administrador e TI não expiram por inatividade.
+  if (perfilIsento(usuario)) {
+    return true;
+  }
+
+  const ultimaAtividade = Number(
+    sessionStorage.getItem(CHAVE_ULTIMA_ATIVIDADE)
+  );
+
+  // Encerra a sessão se não houver horário válido.
+  if (!ultimaAtividade || Number.isNaN(ultimaAtividade)) {
+    logout();
+    return false;
+  }
+
+  const tempoDecorrido = Date.now() - ultimaAtividade;
+
+  if (tempoDecorrido >= TEMPO_INATIVIDADE) {
+    logout();
+    return false;
+  }
+
+  return true;
+};
+
+export const registrarAtividade = () => {
+  const usuario = getUsuario();
+
+  if (
+    !usuario ||
+    usuario.autenticado !== true ||
+    !usuario.token
+  ) {
+    return;
+  }
+
+  // Não registra atividade para administrador ou TI.
+  if (perfilIsento(usuario)) {
+    return;
+  }
+
+  // Não renova uma sessão que já expirou.
+  if (!isAuthenticated()) {
+    return;
+  }
+
+  const agora = Date.now();
+
+  const ultimaGravacao = Number(
+    sessionStorage.getItem(CHAVE_ULTIMA_ATIVIDADE)
+  );
+
+  // Evita gravar a cada movimento do mouse.
+  if (
+    ultimaGravacao &&
+    !Number.isNaN(ultimaGravacao) &&
+    agora - ultimaGravacao < INTERVALO_REGISTRO_ATIVIDADE
+  ) {
+    return;
+  }
+
+  sessionStorage.setItem(
+    CHAVE_ULTIMA_ATIVIDADE,
+    agora.toString()
+  );
+};
+
+export const verificarInatividade = () => {
+  return isAuthenticated();
 };
