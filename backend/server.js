@@ -1,12 +1,21 @@
 const express = require("express");
+
 const cors = require("cors");
+
 const pool = require("./db");
+
 const multer = require("multer");
+
 const path = require("path");
+
 const fs = require("fs");
+
 const bcrypt = require("bcrypt");
+
 const crypto = require("crypto");
+
 const { gerarToken } = require("./auth");
+
 const { autenticarToken, exigirTI, exigirAdmin } = require("./middleware");
 
 const {
@@ -562,6 +571,7 @@ app.patch(
   async (req, res) => {
     try {
       const { id } = req.params;
+
       const { perfil } = req.body;
 
       if (!["usuario", "ti"].includes(perfil)) {
@@ -958,38 +968,107 @@ app.put(
   }
 );
 
+/*
+ * ALTERAÇÃO 1:
+ * Consultar comentários exige que o usuário seja o proprietário
+ * do chamado ou tenha perfil autorizado de TI/administrador.
+ */
 app.get(
   "/api/tickets/:id/comentarios",
   autenticarToken,
   async (req, res) => {
     try {
-      const { id } = req.params;
+      const ticketId = Number(req.params.id);
+
+      if (!Number.isSafeInteger(ticketId) || ticketId <= 0) {
+        return res.status(400).json({
+          error: "Identificador do chamado inválido.",
+        });
+      }
+
+      const usuarioResult = await pool.query(
+        `SELECT id, email, perfil, ativo
+         FROM usuarios
+         WHERE id = $1`,
+        [req.usuario.id]
+      );
+
+      if (
+        usuarioResult.rows.length === 0 ||
+        !usuarioResult.rows[0].ativo
+      ) {
+        return res.status(403).json({
+          error: "Usuário não encontrado ou inativo.",
+        });
+      }
+
+      const usuario = usuarioResult.rows[0];
+
+      const emailUsuario = String(usuario.email || "")
+        .trim()
+        .toLowerCase();
+
+      const usuarioEhEquipeTI =
+        usuario.perfil === "ti" ||
+        emailUsuario === "suportehmaa@gmail.com";
+
+      const ticketResult = await pool.query(
+        `SELECT id, usuario_id
+         FROM tickets
+         WHERE id = $1`,
+        [ticketId]
+      );
+
+      if (ticketResult.rows.length === 0) {
+        return res.status(404).json({
+          error: "Chamado não encontrado.",
+        });
+      }
+
+      const ticket = ticketResult.rows[0];
+
+      if (
+        !usuarioEhEquipeTI &&
+        String(ticket.usuario_id) !== String(usuario.id)
+      ) {
+        return res.status(403).json({
+          error:
+            "Você não tem permissão para acessar os comentários deste chamado.",
+        });
+      }
 
       const result = await pool.query(
         `SELECT *
-        FROM comentarios
-        WHERE ticket_id = $1
-        ORDER BY criado_em ASC`,
-        [id]
+         FROM comentarios
+         WHERE ticket_id = $1
+         ORDER BY criado_em ASC`,
+        [ticketId]
       );
 
-      res.json(result.rows);
+      return res.json(result.rows);
     } catch (err) {
-      console.error(err);
+      console.error("Erro ao buscar comentários:", err);
 
-      res.status(500).json({
+      return res.status(500).json({
         error: "Erro ao buscar comentários",
       });
     }
   }
 );
 
+/*
+ * ALTERAÇÃO 2:
+ * Adicionar comentário exige que o usuário seja o proprietário
+ * do chamado ou tenha perfil autorizado de TI/administrador.
+ * A validação acontece antes do INSERT.
+ */
 app.post(
   "/api/tickets/:id/comentarios",
   autenticarToken,
   async (req, res) => {
     try {
       const { id } = req.params;
+
       const mensagem = req.body.mensagem?.trim();
 
       if (!mensagem) {
@@ -998,7 +1077,6 @@ app.post(
         });
       }
 
-      // Confirma a existência do chamado e obtém o solicitante.
       const ticketResult = await pool.query(
         `SELECT
           t.id,
@@ -1019,8 +1097,7 @@ app.post(
 
       const ticket = ticketResult.rows[0];
 
-      // Usa o perfil atual do banco, em vez de confiar
-      // exclusivamente no perfil contido no token.
+      // Confirma o estado e o perfil atual do usuário no banco.
       const autorResult = await pool.query(
         `SELECT
           id,
@@ -1043,15 +1120,24 @@ app.post(
       }
 
       const autor = autorResult.rows[0];
+
       const emailAutor = String(autor.email || "")
         .trim()
         .toLowerCase();
 
-      // A conta administradora é considerada parte da equipe
-      // mesmo que ainda esteja cadastrada com perfil "usuario".
       const autorEhEquipeTI =
         autor.perfil === "ti" ||
         emailAutor === "suportehmaa@gmail.com";
+
+      // Usuários comuns só podem comentar nos próprios chamados.
+      if (
+        !autorEhEquipeTI &&
+        String(ticket.usuario_id) !== String(autor.id)
+      ) {
+        return res.status(403).json({
+          error: "Você não tem permissão para comentar neste chamado.",
+        });
+      }
 
       // O comentário é registrado antes das notificações.
       await pool.query(
@@ -1141,8 +1227,7 @@ app.post(
           });
         }
       } catch (emailError) {
-        // Falhas em consultas ou no envio de e-mails não apagam
-        // o comentário que já foi salvo.
+        
         console.error(
           `Comentário do chamado #${id} registrado, mas houve uma falha nas notificações:`,
           emailError
