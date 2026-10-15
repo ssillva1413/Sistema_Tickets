@@ -24,11 +24,11 @@ const setoresHospital = [
   "Marketing",
   "NQSP",
   "Nutrição",
-  "Outro",
   "Recepção SUS",
   "SCIH ",
   "UTI Adulto",
   "UTI Pediatrica",
+  "Outro",
 ];
 
 const TicketForm = () => {
