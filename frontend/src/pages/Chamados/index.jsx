@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import WhatsAppButton from "../../components/WhatsAppButton";
 import styles from "./Chamados.module.css";
-
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import ModalChamado from "../../components/ModalChamado";
-
 import { getUsuario, getToken } from "../../services/auth";
-
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 
@@ -29,7 +26,6 @@ const Chamados = () => {
 
   const usuarioLogado = getUsuario();
 
-  // Somente usuários comuns podem criar chamados.
   const podeCriarChamado =
     usuarioLogado?.perfil !== "ti" &&
     usuarioLogado?.email?.trim().toLowerCase() !==
@@ -314,7 +310,7 @@ const Chamados = () => {
               Exportar XLSX
             </button>
 
-            {/* O botão de criação aparece somente para usuários comuns. */}
+            {/* Novo chamado somente para usuários autorizados. */}
             {podeCriarChamado && (
               <button
                 className={styles.novoChamadoLink}
@@ -578,6 +574,8 @@ const Chamados = () => {
           onClose={() => setModalAberto(false)}
         />
       )}
+
+      {podeCriarChamado && <WhatsAppButton />}
 
       <Footer />
     </div>
